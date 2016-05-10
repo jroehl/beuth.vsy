@@ -78,6 +78,7 @@ public class VsyUe1 {
 			e.printStackTrace();
 		}
 
+		System.out.println("Results: ");
 		for (String[] row : results) {
 			System.out.print(row[0]);
 			if (row.length > 1) {
