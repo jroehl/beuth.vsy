@@ -11,7 +11,13 @@ public class VsyUe2 {
 
 static String resultHtml = "";
 
-public static void main(String[] args) throws Exception {
+/**
+ * Main - creates the html and processes the input
+ *
+ * @return
+ * @throws IOException
+ */
+public static void main(String[] args) throws IOException {
 								int port = 9865;
 								String host = InetAddress.getLocalHost().getCanonicalHostName();
 								if (args.length == 1) {
@@ -147,7 +153,7 @@ public static void main(String[] args) throws Exception {
 }
 
 /**
- * Reads file index.html from view directory and passes it as a string
+ * Creates form for processing inputs
  *
  * @return
  * @throws IOException
