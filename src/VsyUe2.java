@@ -19,7 +19,7 @@ static String resultHtml = "";
  */
 public static void main(String[] args) throws IOException {
 								int port = 9865;
-								String host = InetAddress.getLocalHost().getCanonicalHostName();
+								String host = InetAddress.getLocalHost().getHostName();
 								if (args.length == 1) {
 																port = Integer.parseInt(args[0]);
 								} else if (args.length == 2) {
