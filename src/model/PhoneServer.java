@@ -4,7 +4,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Abstraction of PhoneServer as a storage for the entries
- * 
+ *
  * @className PhoneServer
  * @author jroehl
  * @date 2016-05-07
@@ -26,7 +26,7 @@ public class PhoneServer {
 
 	/**
 	 * Returns the number of elements in this list.
-	 * 
+	 *
 	 * @return size
 	 */
 	public int size() {
@@ -35,7 +35,7 @@ public class PhoneServer {
 
 	/**
 	 * Returns the element at the specified position in this list.
-	 * 
+	 *
 	 * @param column
 	 * @return entry
 	 */
