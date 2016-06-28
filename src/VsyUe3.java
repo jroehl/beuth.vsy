@@ -1,10 +1,9 @@
-import controller.Search;
-
 import java.io.*;
 import java.net.*;
+import java.rmi.*;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-
+import model.*;
 /**
  * @author jroehl
  */
@@ -39,9 +38,9 @@ public class VsyUe3 {
             // Open conversation
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-                                                                /*
-																 * Read input streams, get optional references
-																 */
+			/*
+			 * Read input streams, get optional references
+			 */
             String s = in.readLine();
             System.out.println("Incoming: " + s);
             HashMap<String, String> map = new HashMap<>();
@@ -66,16 +65,17 @@ public class VsyUe3 {
             if (map.containsKey("C")) {
                 if (map.get("C").equals("Search")) {
                     CopyOnWriteArrayList<String[]> results = new CopyOnWriteArrayList<String[]>();
+					
+					// Access to remote RMI server
+					IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("server"); //TODO testen mit entferntem Rechner
+                	// IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("//127.0.0.1/server"); // 
 
-                    Thread nameThread = null;
-                    Thread phoneThread = null;
                     String searchString = "";
 
                     if (!map.get("A").isEmpty()) {
                         searchString = map.get("A");
                         if ((map.get("A").matches("^[a-zA-ZäöüÄÖÜ]+[a-zA-ZäöüÄÖÜ\\s]*"))) {
-                            nameThread = new Thread(new Search(searchString, 0, results), "search-name");
-                            nameThread.start();
+							results.add(remoteSearch.getNameSearchResult(searchString));
                         } else {
                             results.add(new String[]{"\"" + searchString + "\"", "is not a valid string!"});
                         }
@@ -84,24 +84,12 @@ public class VsyUe3 {
                     if (!map.get("B").isEmpty()) {
                         searchString = map.get("B");
                         if ((map.get("B").matches("\\d+"))) {
-                            phoneThread = new Thread(new Search(searchString, 1, results), "search-number");
-                            phoneThread.start();
+                            results.add(remoteSearch.getNumberSearchResult(searchString));
                         } else {
                             results.add(new String[]{"\"" + searchString + "\"", "is not a valid number!"});
                         }
                     }
 
-                    // Join search threads
-                    try {
-                        if (nameThread != null) {
-                            nameThread.join();
-                        }
-                        if (phoneThread != null) {
-                            phoneThread.join();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     if (results.size() == 0) {
                         results.add(new String[]{"No result found for", "\"" + searchString + "\""});
                     }

@@ -7,4 +7,4 @@ sftp> exit
 ssh -i ~/.ssh/id_rasp -p 22 jroehl@nas.johannroehl.de
 ssh> ifconfig / ipconfig
 ssh> javac src/VsyUe2.java
-ssh> java src/VsyUe2 9865 $(hostname)
+ssh> java src/VsyUe2 9865 sun65

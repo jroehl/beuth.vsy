@@ -2,7 +2,7 @@ package controller;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import model.PhoneServer;
+import model.PhoneBook;
 
 /**
  * Class is called by a thread and searches a list - passed as an argument
@@ -13,11 +13,10 @@ import model.PhoneServer;
  */
 public class Search implements Runnable {
 
-	private PhoneServer server = new PhoneServer();
-
 	private String str;
 	private int column;
 	private CopyOnWriteArrayList<String[]> results;
+	private PhoneBook phoneBook;
 
 	/**
 	 * Configures the search through a constructor with a searchstring and the column to be searched
@@ -26,10 +25,11 @@ public class Search implements Runnable {
 	 * @param column
 	 * @param results
 	 */
-	public Search(String str, int column, CopyOnWriteArrayList<String[]> results) {
+	public Search(String str, int column, CopyOnWriteArrayList<String[]> results, PhoneBook phoneBook) {
 		this.str = str;
 		this.column = column;
 		this.results = results;
+		this.phoneBook = phoneBook;
 	}
 
 	@Override
@@ -44,9 +44,9 @@ public class Search implements Runnable {
 	 */
 	private void lookingFor() {
 
-		for (int i = 0; i < server.size(); i++) {
-			if (server.getEntry(i)[column].equals(str)) {
-				results.add(server.getEntry(i));
+		for (int i = 0; i < this.phoneBook.size(); i++) {
+			if (this.phoneBook.getEntry(i)[column].equals(str)) {
+				results.add(this.phoneBook.getEntry(i));
 			}
 		}
 
