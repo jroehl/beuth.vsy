@@ -1,9 +1,19 @@
-import java.io.*;
-import java.net.*;
-import java.rmi.*;
-import java.util.*;
+import controller.IRemoteSearch;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLDecoder;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.UnmarshalException;
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import model.*;
+
 /**
  * @author jroehl
  */
@@ -17,7 +27,7 @@ public class VsyUe3 {
      * @return
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NotBoundException {
         int port = 9865;
         String host = InetAddress.getLocalHost().getHostName();
         if (args.length == 1) {
@@ -38,9 +48,9 @@ public class VsyUe3 {
             // Open conversation
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-			/*
-			 * Read input streams, get optional references
-			 */
+                /*
+                 * Read input streams, get optional references
+                 */
             String s = in.readLine();
             System.out.println("Incoming: " + s);
             HashMap<String, String> map = new HashMap<>();
@@ -62,20 +72,22 @@ public class VsyUe3 {
                     }
                 }
             }
+
+            // Access to remote RMI server
+            IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("server");
+            // IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("//127.0.0.1/server");
+
             if (map.containsKey("C")) {
+
                 if (map.get("C").equals("Search")) {
                     CopyOnWriteArrayList<String[]> results = new CopyOnWriteArrayList<String[]>();
-					
-					// Access to remote RMI server
-					IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("server"); //TODO testen mit entferntem Rechner
-                	// IRemoteSearch remoteSearch = (IRemoteSearch) Naming.lookup("//127.0.0.1/server"); // 
 
                     String searchString = "";
 
                     if (!map.get("A").isEmpty()) {
                         searchString = map.get("A");
                         if ((map.get("A").matches("^[a-zA-ZäöüÄÖÜ]+[a-zA-ZäöüÄÖÜ\\s]*"))) {
-							results.add(remoteSearch.getNameSearchResult(searchString));
+                            results.addAll(remoteSearch.getNameSearchResult(searchString));
                         } else {
                             results.add(new String[]{"\"" + searchString + "\"", "is not a valid string!"});
                         }
@@ -84,7 +96,7 @@ public class VsyUe3 {
                     if (!map.get("B").isEmpty()) {
                         searchString = map.get("B");
                         if ((map.get("B").matches("\\d+"))) {
-                            results.add(remoteSearch.getNumberSearchResult(searchString));
+                            results.addAll(remoteSearch.getNumberSearchResult(searchString));
                         } else {
                             results.add(new String[]{"\"" + searchString + "\"", "is not a valid number!"});
                         }
@@ -107,7 +119,7 @@ public class VsyUe3 {
                     // Reinitialise result list
                     results = new CopyOnWriteArrayList<String[]>();
                 } else if (map.get("C").equals("Close server")) {
-                    System.err.println("Server was closed");
+                    System.err.println("Main Server was closed");
                     resultHtml = "</br><h1 style=\"text-align: center\">Good bye</h1><h2 style=\"text-align: center\">Server was closed</h2>";
                     serverExit = true;
                 } else if (map.get("C").equals("Reset")) {
@@ -135,6 +147,11 @@ public class VsyUe3 {
             out.close();
             in.close();
             if (serverExit) {
+                try {
+                    remoteSearch.quit();
+                } catch (UnmarshalException e) {
+//                    ignore
+                }
                 break;
             }
         }
