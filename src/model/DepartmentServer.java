@@ -10,9 +10,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
+/**
+*
++ DepartmentServer serves the Phonebook content etc.
++ 
++
+*/
 public class DepartmentServer extends UnicastRemoteObject implements IRemoteSearch {
-
 
     private PhoneBook phoneBook;
 
@@ -70,9 +74,9 @@ public class DepartmentServer extends UnicastRemoteObject implements IRemoteSear
         try {
             DepartmentServer server = new DepartmentServer();
 
-            LocateRegistry.createRegistry(Registry.REGISTRY_PORT); // Port 1099
-//            Naming.rebind("rmi://compute/MyService", server); // Anmeldung des Dienstes mit rmi://Serverhostname/Eindeutige Bezeichnung des Dienstes
-            Naming.rebind("server", server); //TODO testen mit entferntem Rechner (funktioniert lokal nur, wenn gleicher Name übergeben wird, wie in Client)
+            LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
+
+            Naming.rebind("server", server);
 
             System.out.println("Server ready and waiting for RMIs on port " + Registry.REGISTRY_PORT);
         } catch (Exception e) {

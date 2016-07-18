@@ -1,5 +1,3 @@
-
-
 sftp -i ~/.ssh/id_rasp -oPort=22 jroehl@nas.johannroehl.de
 sftp> put -r localFolder
 sftp> exit
@@ -8,3 +6,20 @@ ssh -i ~/.ssh/id_rasp -p 22 jroehl@nas.johannroehl.de
 ssh> ifconfig / ipconfig
 ssh> javac src/VsyUe2.java
 ssh> java src/VsyUe2 9865 sun65
+
+term1
+ssh sun65
+javac VsyUe3.java
+java VsyUe3 sun65 port
+
+term2
+ssh sun65
+javac DepartmentServer.java
+java DepartmentServer
+
+term3
+cd ~/
+sftp sun65
+sftp> mkdir src
+sftp> put -r dir
+
